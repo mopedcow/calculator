@@ -27,14 +27,32 @@ body {
     border: 2px solid orangered;
     height: 100px;
     display: flex;
-    justify-content: flex-end;
 }
-.readout {
+.op-readout {
+    border: 1px solid lightgrey;
+    flex-basis: 10%;
+}
+.op-readout .ops {
+    padding: 0;
+    margin: 0;
+    width: 24px;
+    list-style: none;
+    border: 1px solid grey;
+    display: flex;
+    justify-content: center;
+}
+.op-readout li {
+    font-family:'Courier New', Courier, monospace;
+    font-size: 18pt;
+    border: 1px solid red;
+}
+.num-readout {
     font-size: 46pt;
     font-family: 'Courier New', Courier, monospace;
     display: block;
     border: 1px solid lightgrey;
     text-align: right;
+    flex-basis: 90%;
 }
 .btnContainer {
     border:2px solid orangered;
