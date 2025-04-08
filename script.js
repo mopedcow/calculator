@@ -13,7 +13,13 @@ function div(a, b) {
 
 let num1;
 let num2;
-let operator;
+let operator = '+';
+
+function displayNumber(num) {
+    display = document.querySelector(".num-readout");
+    let readout = num;
+    display.textContent = readout;
+}
 
 function operate(a, b, op) {
     switch (op) {
@@ -26,5 +32,5 @@ function operate(a, b, op) {
     }
 }
 
-console.log(operate(20, 0, '/'));
+
 
