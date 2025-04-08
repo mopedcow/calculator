@@ -13,7 +13,21 @@ function div(a, b) {
 
 let num1;
 let num2;
-let operator = '+';
+let operator;
+
+const btns = document.querySelectorAll("button");
+
+btns.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+        console.log("boop: " + e.target.textContent);
+    })
+})
+
+function displayOperator(op) {
+    display = document.querySelector(".op-readout");
+    let readout = op;
+    display.textContent = readout;
+}
 
 function displayNumber(num) {
     display = document.querySelector(".num-readout");
@@ -34,3 +48,5 @@ function operate(a, b, op) {
 
 
 
+displayOperator("+");
+displayNumber(4);
