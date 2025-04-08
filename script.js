@@ -26,5 +26,5 @@ function operate(a, b, op) {
     }
 }
 
-console.log(operate(20, 4, '-'));
+console.log(operate(20, 0, '/'));
 
