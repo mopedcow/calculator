@@ -36,6 +36,7 @@ function displayOperator(op) {
 function displayNumber(num) {
     numDisplay.textContent = num;
 }
+
 function clearAll() {
     num1 = 0;
     num2 = 0;
@@ -43,6 +44,7 @@ function clearAll() {
     currNum = 0;
     displayNumber(currNum);
     displayOperator(operator);
+    console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2}`);
 }
 
 btns.forEach((btn) => {
@@ -52,9 +54,13 @@ btns.forEach((btn) => {
             press === "x" ||
             press === "-" ||
             press === "+") {
+                //if !operator, update variable(operator) and set currNum=0
+                //if (operator) and !num2, update variable and set currNum=0
+                //if (operator && num2), operate(num1, num2, operator), then update variable and set currNum=0
                 operator = press;
                 currNum = 0;
                 displayOperator(operator);
+                console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2}`);
         } else if (press === "=") {
             //if num1 & num2 present, evaluate expression & display result
             if (num1 && num2) {
@@ -65,58 +71,24 @@ btns.forEach((btn) => {
             }
         } else if (press === "AC") {
             clearAll();
-        } else if ( Number(press) || press === "0") {
-            //if currNum === 0, replace with 'press' (otherwise 0n)
-            if (currNum === 0) {
-                console.log("zero");
+        } else if ( Number(press) || press === "0" ) {
+            if (!Number(currNum)) { //if currNum === 0, replace with 'press' (otherwise 0n)
                 currNum = press;
-                displayNumber(currNum);
             } else { //if currNum != 0, add 'press' to currNum
-                
-                if (!operator) { 
-                    currNum += press;
-                    num1 = currNum;
-                } else {
-                    if (currNum === 0) {
-                        currNum = press;
-                        num2 = currNum;
-                    } else {
-                        currNum += press;
-                        num2 = currNum;
-                    }
-                }
+                currNum += press;
+            }
+            if (!operator) { 
+                num1 = currNum;
+            } else {
+                num2 = currNum;
             }
             displayNumber(currNum);
             console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2}`);
             //if operator selected (!undefined), store values to num2 : num1
-            
         } else {
             console.log("working on it");
         }
-        
-        /* switch (press) {
-            case "undo":
-            case ".":
-            case "AC":
-                console.log("function not yet available");
-                break;
-            case "/":
-            case "x":
-            case "-":
-            case "+":
-                operator = e.target.textContent;
-                displayOperator(operator);
-                break;
-            case "=":
-                console.log("please wait...");
-                break;
-            default:
-                numReadout += e.target.textContent;
-                displayNumber(numReadout);
-                console.log(typeof numReadout);
-        } */
-    })
-})
+})})
 
 /* an Extra Credit problem for later
 function allClear() {
@@ -131,3 +103,5 @@ function allClear() {
 
 //displayOperator("+");
 //displayNumber(8);
+
+console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2}`);
