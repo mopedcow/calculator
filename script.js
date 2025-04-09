@@ -50,20 +50,26 @@ function clearAll() {
 btns.forEach((btn) => {
     btn.addEventListener("click", (e) => {
         let press = e.target.textContent;
-        if (press === "/" ||
-            press === "x" ||
-            press === "-" ||
-            press === "+") {
-                //if !operator, update variable(operator) and set currNum=0
-                //if (operator) and !num2, update variable and set currNum=0
-                //if (operator && num2), operate(num1, num2, operator), then update variable and set currNum=0
+        if (press === "/" || press === "x" || press === "-" || press === "+") {
+            if (num1 && !num2) {
                 operator = press;
                 currNum = 0;
                 displayOperator(operator);
                 console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2}`);
+            } else if (num1 && num2) {
+                let result = operate(num1, num2, operator);
+                clearAll();
+                num1 = result;
+                operator = press;
+                displayNumber(result);
+                displayOperator(operator);
+            }
+                //if !operator, update variable(operator) and set currNum=0
+                //if (operator) and !num2, update variable and set currNum=0
+                //if (operator && num2), operate(num1, num2, operator), then update variable and set currNum=0
+                
         } else if (press === "=") {
-            //if num1 & num2 present, evaluate expression & display result
-            if (num1 && num2) {
+            if (num1 && num2) { //do nothing unless both nums present
                 let result = operate(num1, num2, operator);
                 clearAll();
                 displayNumber(result);
@@ -72,17 +78,10 @@ btns.forEach((btn) => {
         } else if (press === "AC") {
             clearAll();
         } else if ( Number(press) || press === "0" ) {
-            if (!Number(currNum)) { //if currNum === 0, replace with 'press' (otherwise 0n)
-                currNum = press;
-            } else { //if currNum != 0, add 'press' to currNum
-                currNum += press;
-            }
-            if (!operator) { 
-                num1 = currNum;
-            } else {
-                num2 = currNum;
-            }
+            !Number(currNum) ? currNum = press : currNum += press; //prevent leading 0s
+            !operator ? num1 = currNum : num2 = currNum;
             displayNumber(currNum);
+
             console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2}`);
             //if operator selected (!undefined), store values to num2 : num1
         } else {
