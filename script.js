@@ -1,7 +1,7 @@
 let num1;
 let num2;
 let operator;
-//number currently active:
+let result;
 let currNum = 0;
 
 const numDisplay = document.querySelector(".num-readout");
@@ -16,9 +16,12 @@ function sub(a, b) { return a - b; }
 function mult(a, b) { return a * b; }
 function div(a, b) { return a / b; }
 
+function log () { console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2} operator: ${operator} result: ${result}`); } //for debugging
+
 function operate(a, b, op) {
     a = Number(a);
     b = Number(b);
+    //console.log(a + op + b);
     switch (op) {
         case '+': return add(a, b);
         case '-': return sub(a, b);
@@ -28,67 +31,78 @@ function operate(a, b, op) {
             console.log('?');
 }}
 
-function displayOperator(op) {
-    opDisplay.textContent = op;
-}
-
-function displayNumber(num) {
-    numDisplay.textContent = num;
-}
+function displayOperator(op) { opDisplay.textContent = op; }
+function displayNumber(num) { numDisplay.textContent = num; }
 
 function clearAll() {
     num1 = 0;
     num2 = 0;
     operator = "";
     currNum = 0;
-    displayNumber(currNum);
-    displayOperator(operator);
+    log();
+}
+
+function limitLength(num) {
+    if (num.toString().length > 8) { 
+        return num.toString().slice(0,9);
+    } else {
+        return num;
+    }
 }
 
 btns.forEach((btn) => {
     btn.addEventListener("click", (e) => {
         let press = e.target.textContent;
+
         if (press === "/" || press === "x" || press === "-" || press === "+") {
             if (num1 && !num2) { //if num1 is present, but not num2, change the operator
                 operator = press;
-                currNum = 0;
                 displayOperator(operator);
-                console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2} operator: ${operator}`);
+                currNum = 0;
+                
+                log();
             } else if (num1 && num2) { //if num1&2 present, calculate a result
-                let result = operate(num1, num2, operator);
+                result = limitLength(operate(num1, num2, operator)); //store result here
+                
                 clearAll();
+                
                 num1 = result;
                 operator = press;
                 displayNumber(result);
                 displayOperator(operator);
-                console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2} operator: ${operator}`);
             }
-                
         } else if (press === "=") {
             if (num1 && num2) { //do nothing unless both nums present
-                let result = operate(num1, num2, operator);
+                displayNumber( limitLength(operate(num1, num2, operator)) );
+
                 clearAll();
-                displayNumber(result);
-                displayOperator(operator);
-                console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2} operator: ${operator}`);
+                
+                log();
             }
         } else if (press === "AC") {
             clearAll();
+            displayNumber(currNum);
+            displayOperator(operator);
         } else if ( Number(press) || press === "0" ) {
 
             !Number(currNum) ? currNum = press : currNum += press; //prevent leading 0s
             
+            currNum = limitLength(currNum);
+
             if (!operator) {
                 num1 = currNum;
             } else {
                 num2 = currNum;
                 displayOperator("");
             }
+
             displayNumber(currNum);
-            console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2} operator: ${operator}`);
+
+            log();
+
         } else {
             console.log("working on it");
         }
 })})
 
-console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2} operator: ${operator}`);
+log();
