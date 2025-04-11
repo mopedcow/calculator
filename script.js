@@ -4,6 +4,7 @@ let operator;
 let result;
 let currNum = 0;
 const operators = ["+","-","x","/"];
+const error = ":-(";
 
 const numDisplay = document.querySelector(".num-readout");
 const opDisplay = document.querySelector(".op-readout");
@@ -15,20 +16,31 @@ opDisplay.textContent = operator;
 function add(a, b) { return a + b; }
 function sub(a, b) { return a - b; }
 function mult(a, b) { return a * b; }
-function div(a, b) { return (b === 0) ? "oh no" : a / b; }
+function div(a, b) { return (b === 0) ? error : a / b; }
 
 function log() { console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2} operator: ${operator} result: ${result}`); } //for debugging
 
 function operate(a, b, op) {
     a = Number(a);
     b = Number(b);
+    let c;
 
     switch (op) {
-        case '+': return add(a, b);
-        case '-': return sub(a, b);
-        case 'x': return mult(a, b);
-        case '/': return div(a,b);
-}}
+        case '+': 
+            c = add(a, b);
+            break;
+        case '-':
+            c = sub(a, b);
+            break;
+        case 'x':
+            c = mult(a, b);
+            break;
+        case '/':
+            c = div(a,b);
+            break;
+    }
+    return limitResult(c);
+}
 
 function displayOperator(op) { opDisplay.textContent = op; }
 function displayNumber(num) { numDisplay.textContent = num; }
@@ -45,14 +57,12 @@ function limitInput(num) {
     return (num.toString().length > 8) ? Number(num.toString().slice(0,9)) : num;
 }
 function limitResult(num){
-    //this returns either a rounded number (for floating point)
-    //  or 999,999,999 (for ints > 9 digits long)
-    if (num.toString().length > 9 && Number(num)) {
-        if (Number.isInteger(num)) {
-            return 999999999;
-        } else {
-            return Number(num.toFixed(7));
-        }
+    if (num.toString().length > 9) {
+        return (Number.isInteger(num) && Math.sign(num) === -1) //negative int
+            ? error
+            : (Number.isInteger(num)) 
+            ? 999999999
+            : Number(num.toFixed(7)); //float
     } else {
         return num;
     }
@@ -69,10 +79,10 @@ btns.forEach((btn) => {
                 currNum = 0;
                 log();
             } else if (num2) { //if num1&2 present, calculate a result
-                result = limitResult(operate(num1, num2, operator));
+                result = operate(num1, num2, operator);
                 clearAll();
 
-                if (!Number.isFinite(result)) { //checks for "oh no"
+                if (!Number.isFinite(result)) { //check for error
                     num1 = 0;
                     operator = "";
                 } else {
@@ -86,7 +96,7 @@ btns.forEach((btn) => {
             }
         } else if (press === "=") {
             if (num1 && num2) { //do nothing unless both nums present
-                result = limitResult(operate(num1, num2, operator));
+                result = operate(num1, num2, operator);
                 displayNumber(result);
                 clearAll();
                 log();
@@ -103,7 +113,7 @@ btns.forEach((btn) => {
                 num1 = currNum;
             } else {
                 num2 = currNum;
-                displayOperator(""); //clear operator
+                displayOperator(""); //hide operator
             }
 
             displayNumber(currNum);
