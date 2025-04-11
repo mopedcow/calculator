@@ -41,22 +41,35 @@ function clearAll() {
     log();
 }
 
-function limitLength(num) {
+function limitInput(num) { 
     return (num.toString().length > 8) ? Number(num.toString().slice(0,9)) : num;
+}
+function limitResult(num){
+    //this returns either a rounded number (for floating point)
+    //  or 999,999,999 (for ints > 9 digits long)
+    if (num.toString().length > 9 && Number(num)) {
+        if (Number.isInteger(num)) {
+            return 999999999;
+        } else {
+            return Number(num.toFixed(7));
+        }
+    } else {
+        return num;
+    }
 }
 
 btns.forEach((btn) => {
     btn.addEventListener("click", (e) => {
         let press = e.target.textContent;
 
-        if (press === "/" || press === "x" || press === "-" || press === "+") {
+        if (operators.includes(press)) {
             if (num1 && !num2) { //if num1 is present, but not num2, change the operator
                 operator = press;
                 displayOperator(operator);
                 currNum = 0;
                 log();
             } else if (num2) { //if num1&2 present, calculate a result
-                result = limitLength(operate(num1, num2, operator));
+                result = limitResult(operate(num1, num2, operator));
                 clearAll();
 
                 if (!Number.isFinite(result)) { //checks for "oh no"
@@ -73,7 +86,7 @@ btns.forEach((btn) => {
             }
         } else if (press === "=") {
             if (num1 && num2) { //do nothing unless both nums present
-                result = limitLength(operate(num1, num2, operator));
+                result = limitResult(operate(num1, num2, operator));
                 displayNumber(result);
                 clearAll();
                 log();
@@ -84,7 +97,7 @@ btns.forEach((btn) => {
             displayOperator(operator);
         } else if ( Number(press) || press === "0" ) {
             !Number(currNum) ? currNum = press : currNum += press; //prevent leading 0s
-            currNum = limitLength(currNum);
+            currNum = limitInput(currNum);
 
             if (!operator) {
                 num1 = currNum;
