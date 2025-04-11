@@ -3,6 +3,7 @@ let num2;
 let operator;
 let result;
 let currNum = 0;
+const operators = ["+","-","x","/"];
 
 const numDisplay = document.querySelector(".num-readout");
 const opDisplay = document.querySelector(".op-readout");
@@ -14,21 +15,19 @@ opDisplay.textContent = operator;
 function add(a, b) { return a + b; }
 function sub(a, b) { return a - b; }
 function mult(a, b) { return a * b; }
-function div(a, b) { return a / b; }
+function div(a, b) { return (b === 0) ? "oh no" : a / b; }
 
-function log () { console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2} operator: ${operator} result: ${result}`); } //for debugging
+function log() { console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2} operator: ${operator} result: ${result}`); } //for debugging
 
 function operate(a, b, op) {
     a = Number(a);
     b = Number(b);
-    //console.log(a + op + b);
+
     switch (op) {
         case '+': return add(a, b);
         case '-': return sub(a, b);
         case 'x': return mult(a, b);
         case '/': return div(a,b);
-        default:
-            console.log('?');
 }}
 
 function displayOperator(op) { opDisplay.textContent = op; }
@@ -43,11 +42,7 @@ function clearAll() {
 }
 
 function limitLength(num) {
-    if (num.toString().length > 8) { 
-        return num.toString().slice(0,9);
-    } else {
-        return num;
-    }
+    return (num.toString().length > 8) ? Number(num.toString().slice(0,9)) : num;
 }
 
 btns.forEach((btn) => {
@@ -59,24 +54,28 @@ btns.forEach((btn) => {
                 operator = press;
                 displayOperator(operator);
                 currNum = 0;
-                
                 log();
-            } else if (num1 && num2) { //if num1&2 present, calculate a result
-                result = limitLength(operate(num1, num2, operator)); //store result here
-                
+            } else if (num2) { //if num1&2 present, calculate a result
+                result = limitLength(operate(num1, num2, operator));
                 clearAll();
-                
-                num1 = result;
-                operator = press;
+
+                if (!Number.isFinite(result)) { //checks for "oh no"
+                    num1 = 0;
+                    operator = "";
+                } else {
+                    num1 = result;
+                    operator = press;
+                }
+
                 displayNumber(result);
                 displayOperator(operator);
+                log();
             }
         } else if (press === "=") {
             if (num1 && num2) { //do nothing unless both nums present
-                displayNumber( limitLength(operate(num1, num2, operator)) );
-
+                result = limitLength(operate(num1, num2, operator));
+                displayNumber(result);
                 clearAll();
-                
                 log();
             }
         } else if (press === "AC") {
@@ -84,22 +83,18 @@ btns.forEach((btn) => {
             displayNumber(currNum);
             displayOperator(operator);
         } else if ( Number(press) || press === "0" ) {
-
             !Number(currNum) ? currNum = press : currNum += press; //prevent leading 0s
-            
             currNum = limitLength(currNum);
 
             if (!operator) {
                 num1 = currNum;
             } else {
                 num2 = currNum;
-                displayOperator("");
+                displayOperator(""); //clear operator
             }
 
             displayNumber(currNum);
-
             log();
-
         } else {
             console.log("working on it");
         }
