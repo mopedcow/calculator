@@ -6,38 +6,47 @@ body {
     font-family: monospace;
     display: flex;
     justify-content: center;
+    background-color: black;
 }
 .container {
     padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 1px solid lightgrey;
+    color: palegreen;
 }
 .calcBody {
     width: 450px;
     height: 500px;
     padding: 30px;
-    border: 2px solid;
+    border: 10px solid turquoise;
+    border-top: 8px solid yellow;
+    border-right: 8px solid yellow;
+    background-color: palegreen;
+    border-radius: 22px;
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 .display {
     padding: 10px;
-    border: 2px solid orangered;
+    border: 5px solid yellow;
+    border-top: 6px solid turquoise;
+    border-right: 6px solid turquoise;
+    background-color: royalblue;
+    color: tomato;
+    border-radius: 15px;
     height: 100px;
     display: flex;
 }
 .op-container {
-    border: 1px solid lightgrey;
-    flex-basis: 8%;
+    flex-basis: 5%;
 }
 .op-container .op-readout {
     padding: 0;
     margin: 0;
     width: 24px;
-    height: 28px;
+    height: 38px;
     font-family: 'Courier New', Courier, monospace;
     font-size: 32pt;
     display: flex;
@@ -46,22 +55,37 @@ body {
 .num-readout {
     font-size: 46pt;
     font-family: 'Courier New', Courier, monospace;
+    filter: drop-shadow(2px 3px 1px darkblue);
     display: block;
     height: 75px;
-    border: 1px solid lightgrey;
     text-align: right;
     flex-basis: 92%;
 }
 .btnContainer {
-    border:2px solid orangered;
+    border: 3px solid yellow;
+    border-top: 3px solid turquoise;
+    border-right: 3px solid turquoise;
+    background-color: palegreen;
+    border-radius: 12px;
+    padding: 5px;
     height: 380px;
     display: flex;
     flex-direction: column;
+    gap: 6px;
 }
 .row {
     display: flex;
     flex: 1;
+    gap : 6px;
 }
 button {
+    border: 5px solid plum;
+    border-top: 5px solid ivory;
+    border-right: 5px solid ivory;
+    background-color: lightpink;
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 20px;
+    color: royalblue;
     flex: 1;
 }
