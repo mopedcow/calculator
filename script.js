@@ -1,30 +1,39 @@
-let num1;
-let num2;
-let operator;
-let result;
-let currNum = 0;
 const operators = ["+","-","x","/"];
 const error = ":-(";
+let num1 = null;
+let num2 = null;
+let operator = null;
+let currNum = null;
+let result;
+let dispNum = "0";
+let dispOp = "";
 
 const numDisplay = document.querySelector(".num-readout");
 const opDisplay = document.querySelector(".op-readout");
 const btns = document.querySelectorAll("button");
 
-numDisplay.textContent = currNum;
-opDisplay.textContent = operator;
+numDisplay.textContent = dispNum;
+opDisplay.textContent = dispOp;
 
-function add(a, b) { return a + b; }
-function sub(a, b) { return a - b; }
-function mult(a, b) { return a * b; }
-function div(a, b) { return (b === 0) ? error : a / b; }
+function log() { // for debugging
+    console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2} operator: ${operator} result: ${result}`); 
+} 
 
-function log() { console.log(`currNum: ${currNum} - num1: ${num1} - num2: ${num2} operator: ${operator} result: ${result}`); } //for debugging
+function displayOperator(op) { opDisplay.textContent = op; }
+function displayNumber(num) { numDisplay.textContent = num; }
+
+function add(a, b) { return Number(a + b); }
+function sub(a, b) { return Number(a - b); }
+function mult(a, b) { return Number(a * b); }
+function div(a, b) { 
+    return (b === 0) ? error 
+    : Number(a / b); 
+}
 
 function operate(a, b, op) {
     a = Number(a);
     b = Number(b);
     let c;
-
     switch (op) {
         case '+': 
             c = add(a, b);
@@ -39,88 +48,119 @@ function operate(a, b, op) {
             c = div(a,b);
             break;
     }
-    return limitResult(c);
+    return roundNumber(c);
 }
 
-function displayOperator(op) { opDisplay.textContent = op; }
-function displayNumber(num) { numDisplay.textContent = num; }
-
 function clearAll() {
-    num1 = 0;
-    num2 = 0;
-    operator = "";
-    currNum = 0;
-    log();
+    num1 = null;
+    num2 = null;
+    operator = null;
+    currNum = null;
+    dispOp = '';
 }
 
 function limitInput(num) { 
-    return (num.toString().length > 8) ? Number(num.toString().slice(0,9)) : num;
+    return (num.length > 8) ? num.slice(0,9) : num;
 }
-function limitResult(num){
+
+function roundNumber(num) {
     if (num.toString().length > 9) {
-        return (Number.isInteger(num) && Math.sign(num) === -1) //negative int
-            ? error
-            : (Number.isInteger(num)) 
-            ? 999999999
-            : Number(num.toFixed(7)); //float
+        if (Number.isInteger(num)) {
+            if (Math.sign === -1) {
+                return error;
+            } else {
+                return 999999999;
+            }
+        } else {
+            let roundTo = 8;
+            let numPlace = num.toString().indexOf('.');
+            return Number(num.toFixed(roundTo - numPlace));
+        }
     } else {
         return num;
+}}
+
+function pressNum(press) {
+    (currNum === "0" || currNum === null) ? currNum = press : currNum += press; //prevent leading 0s
+    currNum = limitInput(currNum);
+
+    if (!operator) {
+        num1 = currNum;
+    } else {
+        num2 = currNum;
+        dispOp = ""; //hide operator
     }
+    dispNum = currNum;
+}
+
+function pressEquals() {
+    if (num1 && num2) { //do nothing unless both nums present
+        result = operate(num1, num2, operator);
+        clearAll();
+        dispNum = result;
+    }
+}
+
+function pressOperator(press) {
+    if (num1 && !num2) { //if num1 is present, but not num2, change the operator
+        operator = press;
+        dispOp = operator;
+        dispNum = num1;
+        currNum = null;
+    } else if (num1 && num2) { //if num1&2 present, calculate a result
+        result = operate(num1, num2, operator);
+        clearAll();
+        if (!Number.isFinite(result)) { //check for error
+            clearAll();
+        } else {
+            num1 = result;
+            operator = press;
+        }
+        dispOp = operator;
+        dispNum = result;
+    }
+}
+
+function pressPoint() {
+    if (currNum === null) {
+        currNum = "0.";
+    } else if (currNum.indexOf('.') === -1) {
+        currNum += '.';
+    }
+    dispNum = currNum;
+}
+
+function pressUndo() {
+    if (currNum === null) {
+        dispNum = num1;
+    } else {
+        if (currNum.length > 1) {
+            currNum = currNum.slice(0, -1);
+        } else {
+            currNum = "0";
+        }
+        dispNum = currNum;
+    }
+}
+
+function pressAC() {
+    clearAll();
+    dispNum = '0';
 }
 
 btns.forEach((btn) => {
     btn.addEventListener("click", (e) => {
         let press = e.target.textContent;
-
-        if (operators.includes(press)) {
-            if (num1 && !num2) { //if num1 is present, but not num2, change the operator
-                operator = press;
-                displayOperator(operator);
-                currNum = 0;
-                log();
-            } else if (num2) { //if num1&2 present, calculate a result
-                result = operate(num1, num2, operator);
-                clearAll();
-
-                if (!Number.isFinite(result)) { //check for error
-                    num1 = 0;
-                    operator = "";
-                } else {
-                    num1 = result;
-                    operator = press;
-                }
-
-                displayNumber(result);
-                displayOperator(operator);
-                log();
-            }
-        } else if (press === "=") {
-            if (num1 && num2) { //do nothing unless both nums present
-                result = operate(num1, num2, operator);
-                displayNumber(result);
-                clearAll();
-                log();
-            }
-        } else if (press === "AC") {
-            clearAll();
-            displayNumber(currNum);
-            displayOperator(operator);
-        } else if ( Number(press) || press === "0" ) {
-            !Number(currNum) ? currNum = press : currNum += press; //prevent leading 0s
-            currNum = limitInput(currNum);
-
-            if (!operator) {
-                num1 = currNum;
-            } else {
-                num2 = currNum;
-                displayOperator(""); //hide operator
-            }
-
-            displayNumber(currNum);
-            log();
-        } else {
-            console.log("working on it");
-        }
+          (press === "=") ? pressEquals()
+        : (press === "AC") ? pressAC()
+        : (press === ".") ? pressPoint()
+        : (press === "undo") ? pressUndo()
+        : (operators.includes(press)) ? pressOperator(press)
+        : (Number(press) || press === "0") ? pressNum(press)
+        : console.log("error: unidentified button press");
+        log();
+        displayNumber(dispNum);
+        displayOperator(dispOp);
 })})
 
 log();
